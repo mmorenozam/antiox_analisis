@@ -34,3 +34,24 @@ ggplot(ant,aes(x=week,y=antiox,group=farm))+
   geom_point()+
   facet_grid(zone~.)
 
+library(mice)
+
+ant.to.imp <- ant[,c(1,2,20,18,19,9)]
+ant.to.imp$farm <- as.factor(ant.to.imp$farm)
+ant.to.imp$zone <- as.factor(ant.to.imp$zone)
+head(ant.to.imp)
+str(ant.to.imp)
+
+zon.2 <- subset(ant.to.imp,zone==2)
+zon.3 <- subset(ant.to.imp,zone==3)
+
+ant.imp2 <- mice(zon.2,method="2l.lmer")
+
+compl.ant <- complete(ant.imp2,"long")
+#head(compl.ant)
+
+df1 <- subset(compl.ant,.imp==1)
+
+ggplot(df1,aes(x=week,y=antiox,group=farm))+
+  geom_line()+
+  geom_point()
